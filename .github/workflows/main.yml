@@ -1,0 +1,45 @@
+name: Build AnyPS5 Dead Cells Relinker
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch: # מאפשר לך להפעיל את הבנייה ידנית מה-GitHub UI
+
+jobs:
+  build-windows:
+    runs-on: windows-2022
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Clone OverkillLabs DeadCells Project
+      run: |
+        git clone --recursive https://github.com
+        cd DeadCells-PS5-Native
+      shell: pwsh
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Setup CMake
+      uses: lukka/get-cmake@latest
+
+    - name: Configure CMake and Build Project
+      run: |
+        cd DeadCells-PS5-Native
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release
+        cmake --build . --config Release
+      shell: pwsh
+
+    - name: Upload Compiled Binary Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: AnyPS5-DeadCells-Release
+        path: |
+          DeadCells-PS5-Native/build/Release/*.exe
+          DeadCells-PS5-Native/build/Release/*.dll
