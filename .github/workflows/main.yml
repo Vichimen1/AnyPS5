@@ -19,9 +19,8 @@ jobs:
         submodules: recursive
 
     - name: Setup MinGW-w64 GCC
-      uses: egor-tisin/setup-mingw-gh-action@v2
+      uses: egor-tensin/setup-mingw@v3 # התיקון כאן: tensin במקום tisin וגרסה v3 המעודכנת
       with:
-        version: 15.2.0
         platform: x64
 
     - name: Setup CMake
@@ -38,7 +37,6 @@ jobs:
     - name: Package Toolchain
       run: |
         mkdir dist
-        # העתקת קובץ ה-Relinker והספריות המקומפלות (DLLs)
         Copy-Item -Path build/*.exe, build/*.dll -Destination dist/ -ErrorAction SilentlyContinue
         cd dist
         Compress-Archive -Path * -DestinationPath ../AnyPS5-Toolchain.zip
